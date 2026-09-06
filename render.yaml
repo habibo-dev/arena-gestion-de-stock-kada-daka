@@ -1,0 +1,26 @@
+# Blueprint Render (https://render.com) — déploiement en un clic depuis GitHub.
+# Voir la section « Déploiement » du README.
+services:
+  - type: web
+    name: autostock
+    runtime: docker
+    region: frankfurt
+    # « starter » permet un disque persistant (la base de données survit aux redéploiements).
+    # Pour tester gratuitement : plan: free et supprimez le bloc « disk » (la base est alors
+    # recréée avec les données de démonstration à chaque redémarrage).
+    plan: starter
+    healthCheckPath: /connexion
+    autoDeploy: true
+    disk:
+      name: autostock-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: TZ
+        value: Africa/Algiers
+      - key: DATABASE_PATH
+        value: /app/data/autostock.db
+      - key: UPLOAD_DIR
+        value: /app/data/uploads
+      - key: SEED_DEMO_DATA
+        value: "true"
