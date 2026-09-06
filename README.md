@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AutoStock — gestion de stock de pièces automobiles
 
-## Getting Started
+Application web de gestion de stock pour un magasin de pièces détachées automobiles,
+conçue pour remplacer un suivi Excel (« Liste des Articles ») par une base de données
+relationnelle, tout en conservant le vocabulaire du métier : **Référence, Désignation,
+Marque, Quantité, Prix d'Achat, Prix Gros, Prix Détail, UM, Rayon**.
 
-First, run the development server:
+Interface en français, montants en dinars (DA), dates au format français.
+
+## Fonctionnalités
+
+| Module | Contenu |
+| --- | --- |
+| Tableau de bord | Références, quantité totale, valeur du stock, stock faible, ruptures, ventes / achats du jour, évolution des ventes et du stock, top pièces, répartition par catégorie, derniers mouvements, alertes |
+| Pièces | CRUD complet, duplication, archivage, image, références OEM / alternatives / fournisseur (cellules « A / B » découpées, valeur brute conservée), véhicules compatibles, historique des mouvements |
+| Stock | Vue par statut (Disponible / Stock faible / Rupture), rayons, ajustements et transferts |
+| Recherche intelligente | Recherche multi-champs tolérante (espaces, tirets, casse) sur références, désignations, marques, codes-barres et véhicules ; interprétation des requêtes libres (« plaquette frein clio », « bosch 0986 », « clio 4 1.5 dci ») ; abstraction prête pour un moteur IA/NLP |
+| Recherche par image | Téléversement / caméra → OCR (Tesseract hors ligne, ou fournisseur distant via variables d'environnement) → extraction de références → résultats classés avec niveau de confiance et confirmation manuelle. Aucune identification n'est inventée |
+| Mouvements | Chaque variation de stock crée un mouvement (type, quantité, avant / après, utilisateur, motif, document) |
+| Ventes | Brouillon → Confirmée → Annulée ; prix gros / détail par ligne, remise, mode de paiement ; la confirmation déduit le stock, la survente est bloquée (sauf paramètre « stock négatif ») |
+| Achats | Brouillon → Commandée → Reçue → Annulée ; la réception augmente le stock et met à jour le prix d'achat ; suggestions de réapprovisionnement |
+| Fournisseurs | Fiche, achats, pièces fournies, historique |
+| Véhicules & compatibilité | Marque, modèle, génération, années, motorisation, cylindrée, carburant, puissance, code moteur ; liens pièce ↔ véhicule **vérifiés** ou **à vérifier** (jamais inventés) |
+| Rapports | État et valeur du stock, stock faible, ruptures, mouvements, ventes, achats, top ventes, rotation ; filtres de dates ; export Excel |
+| Import / Export | Assistant d'import Excel (feuille → colonnes → correspondance → validation → doublons → confirmation), exports Excel avec en-têtes en français |
+| Utilisateurs | Rôles Administrateur / Gérant / Employé, matrice des droits, activation / désactivation |
+| Paramètres | Entreprise, stock négatif, tarif par défaut, préfixes de numérotation |
+
+## Démarrage
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local     # facultatif : les valeurs par défaut fonctionnent
+npm run dev                    # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La base SQLite (`data/autostock.db`) est créée et remplie de données de démonstration
+au premier démarrage. Comptes de démonstration :
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Identifiant | Mot de passe | Rôle |
+| --- | --- | --- |
+| `admin` | `admin123` | Administrateur |
+| `gerant` | `gerant123` | Gérant |
+| `vendeur` | `vendeur123` | Employé |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Autres commandes : `npm run build` / `npm start` (production), `npm run lint`,
+`npm run typecheck`, `npm run db:reset` (réinitialise et re-remplit la base de démo).
 
-## Learn More
+## Scénario de bout en bout
 
-To learn more about Next.js, take a look at the following resources:
+1. **Achats → Nouvel achat** : choisir un fournisseur, ajouter des pièces, *Réceptionner* →
+   le stock augmente et un mouvement `Entrée achat` est créé.
+2. **Recherche** : saisir `Clio 4 1.5 dCi` → le véhicule est reconnu et les pièces compatibles
+   en stock sont listées.
+3. **Ventes → Nouvelle vente** : ajouter la pièce (prix gros ou détail), *Confirmer* →
+   le stock diminue, un mouvement `Sortie vente` est créé.
+4. **Tableau de bord** : les indicateurs se mettent à jour et la pièce apparaît dans les
+   alertes si elle passe sous son stock minimum.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js 15** (App Router, Server Components, Server Actions), **React 19**, **TypeScript strict**, **Tailwind CSS 4**.
+- **SQLite** via `better-sqlite3` + **Drizzle ORM** (migrations dans `drizzle/`), index FTS5 trigram pour la recherche.
+- `exceljs` pour l'import / export, `tesseract.js` pour l'OCR local, `recharts` pour les graphiques.
 
-## Deploy on Vercel
+```
+src/
+  app/            routes (App Router) — (auth)/connexion, (app)/… , api/
+  components/     UI (ui/), et composants par module (parts/, sales/, search/, …)
+  hooks/          useDebounce, useQueryState, useUnsavedChanges, useAction
+  lib/            utilitaires partagés client/serveur : formats, schémas zod, permissions, normalisation des références
+  server/
+    db/           schéma Drizzle, client, index de recherche, données de démonstration
+    services/     logique métier (stock, ventes, achats, recherche, rapports, import/export…)
+    actions/      Server Actions (validation zod → services → ActionResult)
+    auth/         sessions et permissions
+    vision/       abstraction « image → texte → références » (OCR local ou API distante)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Règles clés :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Toute modification de quantité passe par `applyStockMovement` dans une transaction :
+  il n'existe aucun chemin qui modifie `parts.quantity` sans mouvement.
+- Les actions serveur vérifient les permissions (`requirePermission`) et retournent
+  `{ ok: true, data } | { ok: false, error }` avec des messages en français.
+- Les données de compatibilité portent un indicateur `verified` ; les pièces importées
+  ou saisies sans source restent « à vérifier ».
+
+## Variables d'environnement
+
+Voir `.env.example`. Les clés d'API éventuelles (`VISION_API_URL`, `VISION_API_KEY`)
+ne sont lues que côté serveur et ne sont jamais exposées au navigateur.
