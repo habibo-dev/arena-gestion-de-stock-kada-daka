@@ -1,0 +1,15 @@
+# Démarrage sur un serveur / VPS :  docker compose up -d --build   →  http://<ip-du-serveur>:3000
+services:
+  autostock:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      TZ: Africa/Algiers
+      SEED_DEMO_DATA: "true"
+      # Sans HTTPS (accès direct par http://ip:3000), le cookie de session doit être non sécurisé.
+      # Supprimez cette ligne dès que l'application est servie derrière HTTPS (Caddy, Nginx, Traefik…).
+      COOKIE_SECURE: "false"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

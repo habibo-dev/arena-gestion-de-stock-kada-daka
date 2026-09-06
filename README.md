@@ -57,6 +57,38 @@ Autres commandes : `npm run build` / `npm start` (production), `npm run lint`,
 4. **Tableau de bord** : les indicateurs se mettent à jour et la pièce apparaît dans les
    alertes si elle passe sous son stock minimum.
 
+## Déploiement (obtenir un lien partageable)
+
+AutoStock est une application serveur (Node.js + base SQLite sur disque) : elle ne peut pas être
+hébergée sur GitHub Pages. Trois options :
+
+### Option 1 — Render (le plus simple, depuis GitHub)
+
+[![Déployer sur Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/habibo-dev/arena-gestion-de-stock-kada-daka)
+
+1. Cliquez sur le bouton (ou **New → Blueprint** dans Render et choisissez ce dépôt) ; le fichier
+   `render.yaml` configure tout (Docker, disque persistant `/app/data`, variables).
+2. Après quelques minutes, Render fournit une adresse du type `https://autostock.onrender.com`
+   à partager. Connectez-vous avec `admin` / `admin123`, puis **changez les mots de passe**
+   (Utilisateurs) avant de partager le lien.
+3. Plan gratuit : mettez `plan: free` et retirez le bloc `disk` dans `render.yaml`
+   (la base est alors réinitialisée avec la démo à chaque redémarrage).
+
+### Option 2 — Railway / Fly.io / tout hébergeur Docker
+
+Le `Dockerfile` est autodétecté. Montez un volume sur `/app/data` pour conserver les données,
+et définissez `TZ=Africa/Algiers` (les hébergeurs injectent `PORT` automatiquement).
+
+### Option 3 — Serveur / VPS (Docker Compose)
+
+```bash
+git clone https://github.com/habibo-dev/arena-gestion-de-stock-kada-daka.git && cd arena-gestion-de-stock-kada-daka
+docker compose up -d --build        # → http://<ip-du-serveur>:3000
+```
+
+`docker-compose.yml` définit `COOKIE_SECURE=false` pour un accès en HTTP simple ; retirez cette
+variable dès que l'application est servie en HTTPS (Caddy, Nginx…).
+
 ## Architecture
 
 - **Next.js 15** (App Router, Server Components, Server Actions), **React 19**, **TypeScript strict**, **Tailwind CSS 4**.
