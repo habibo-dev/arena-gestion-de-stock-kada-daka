@@ -78,7 +78,9 @@ export function Combobox<V extends string | number = string>(props: ComboboxProp
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced, open, isAsync]);
 
-  const options = isAsync ? asyncOptions : (props.options ?? []);
+  const staticOptions = !isAsync && "options" in props ? props.options : undefined;
+  const options = React.useMemo<ComboOption<V>[]>(() => (isAsync ? asyncOptions : (staticOptions ?? [])), [isAsync, asyncOptions, staticOptions]);
+  const listboxId = React.useId();
   const selected = React.useMemo<ComboOption<V> | null>(() => {
     if (value === null || value === undefined) return null;
     const fromList = options.find((o) => o.value === value);
@@ -105,6 +107,8 @@ export function Combobox<V extends string | number = string>(props: ComboboxProp
           id={id}
           role="combobox"
           aria-expanded={open}
+          aria-controls={listboxId}
+          aria-haspopup="listbox"
           aria-invalid={invalid || undefined}
           className={cn(
             "flex w-full items-center justify-between gap-2 rounded-lg border bg-white text-left text-[13.5px] shadow-xs transition-colors focus-ring disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-ink-muted",
@@ -140,7 +144,7 @@ export function Combobox<V extends string | number = string>(props: ComboboxProp
               <Command.Input autoFocus value={query} onValueChange={setQuery} placeholder={searchPlaceholder} className="h-9 w-full bg-transparent text-[13.5px] outline-none placeholder:text-ink-faint" />
               {loading ? <Loader2 className="size-4 animate-spin text-ink-muted" /> : null}
             </div>
-            <Command.List className="max-h-72 overflow-y-auto p-1">
+            <Command.List id={listboxId} className="max-h-72 overflow-y-auto p-1">
               {!loading ? <Command.Empty className="px-2 py-6 text-center text-[13px] text-ink-muted">{isAsync && !debounced && options.length === 0 ? "Saisissez un terme pour rechercher" : emptyText}</Command.Empty> : null}
               {options.map((o) => (
                 <Command.Item

@@ -210,7 +210,7 @@ export function SaleForm({ mode, initial, allowNegativeStock, can, prefillPart }
                                 tarif {PRICE_TIER_LABELS[priceTier].toLowerCase()} : {formatAmount(ref)}
                               </button>
                             ) : null}
-                            {l.unitPrice < l.part.purchasePrice ? <p className="mt-0.5 text-[10.5px] text-danger-700">sous le prix d'achat ({formatAmount(l.part.purchasePrice)})</p> : null}
+                            {l.unitPrice < l.part.purchasePrice ? <p className="mt-0.5 text-[10.5px] text-danger-700">sous le prix d&apos;achat ({formatAmount(l.part.purchasePrice)})</p> : null}
                           </td>
                           <td className="px-3 py-2 text-right font-medium">
                             <Money value={l.quantity * l.unitPrice} />

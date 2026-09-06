@@ -100,7 +100,7 @@ export default async function PartDetailPage({ params }: Props) {
           </Card>
 
           <Card>
-            <CardHeader title="Références" description={part.referenceRaw && part.referenceRaw !== part.reference ? <>Valeur d'origine du fichier importé : <span className="font-mono">{part.referenceRaw}</span></> : "Référence principale et références équivalentes, toutes recherchables"} />
+            <CardHeader title="Références" description={part.referenceRaw && part.referenceRaw !== part.reference ? <>Valeur d&apos;origine du fichier importé : <span className="font-mono">{part.referenceRaw}</span></> : "Référence principale et références équivalentes, toutes recherchables"} />
             <div className="divide-y divide-line">
               <div className="flex items-center gap-3 px-5 py-2.5 text-[13px]">
                 <span className="w-48 shrink-0 text-ink-muted">Référence principale</span>
@@ -140,7 +140,7 @@ export default async function PartDetailPage({ params }: Props) {
             <CardHeader title="Prix" />
             <div className="divide-y divide-line text-[13px]">
               <div className="flex items-center justify-between px-5 py-2.5">
-                <span className="text-ink-muted">Prix d'achat</span>
+                <span className="text-ink-muted">Prix d&apos;achat</span>
                 <Money value={part.purchasePrice} />
               </div>
               <div className="flex items-center justify-between px-5 py-2.5">

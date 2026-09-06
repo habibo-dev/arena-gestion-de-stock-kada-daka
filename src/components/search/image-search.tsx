@@ -136,7 +136,7 @@ export function ImageSearch({ provider }: { provider: { label: string; mode: "lo
 
         <div className="flex gap-2">
           <Button className="flex-1" size="lg" disabled={!file || busy || !provider.available} loading={busy} onClick={analyze}>
-            <ScanText /> Analyser l'image
+            <ScanText /> Analyser l&apos;image
           </Button>
           {file ? (
             <Button variant="secondary" size="lg" onClick={reset} disabled={busy} aria-label="Recommencer">
@@ -155,7 +155,7 @@ export function ImageSearch({ provider }: { provider: { label: string; mode: "lo
               ? "Reconnaissance de texte (OCR) exécutée sur le serveur, sans envoi de données à l'extérieur. Un fournisseur de vision externe peut être branché via les variables VISION_API_URL / VISION_API_KEY."
               : "Fournisseur de vision externe configuré côté serveur. Aucune clé n'est exposée au navigateur."}
           </p>
-          {!provider.available ? <InlineAlert variant="danger" className="mt-2">Le moteur d'analyse n'est pas disponible. Vérifiez l'installation du serveur.</InlineAlert> : null}
+          {!provider.available ? <InlineAlert variant="danger" className="mt-2">Le moteur d&apos;analyse n&apos;est pas disponible. Vérifiez l&apos;installation du serveur.</InlineAlert> : null}
         </div>
       </div>
 
@@ -181,7 +181,7 @@ export function ImageSearch({ provider }: { provider: { label: string; mode: "lo
           <div className="card flex flex-col items-center justify-center px-6 py-14 text-center">
             <Sparkles className="size-7 text-ink-faint" />
             <p className="mt-3 text-[14px] font-medium">Comment ça marche</p>
-            <p className="mt-1 max-w-md text-[13px] text-ink-muted">L'image est analysée pour en extraire le texte lisible (références, marque). Ces éléments sont ensuite recherchés dans votre stock. Chaque proposition affiche un niveau de confiance : rien n'est identifié sans preuve textuelle — en cas de doute, vous confirmez manuellement.</p>
+            <p className="mt-1 max-w-md text-[13px] text-ink-muted">L&apos;image est analysée pour en extraire le texte lisible (références, marque). Ces éléments sont ensuite recherchés dans votre stock. Chaque proposition affiche un niveau de confiance : rien n&apos;est identifié sans preuve textuelle — en cas de doute, vous confirmez manuellement.</p>
           </div>
         ) : null}
 
@@ -196,7 +196,7 @@ export function ImageSearch({ provider }: { provider: { label: string; mode: "lo
           <>
             {result.status === "no-text" ? (
               <InlineAlert variant="warning" icon={<AlertTriangle />} title="Aucun texte exploitable n'a été lu sur cette image">
-                Aucune identification n'est proposée plutôt qu'une identification inventée. Essayez une photo plus nette de l'étiquette ou de la gravure, mieux éclairée et cadrée serré, puis relancez. Vous pouvez aussi saisir la référence dans la recherche intelligente.
+                Aucune identification n&apos;est proposée plutôt qu&apos;une identification inventée. Essayez une photo plus nette de l&apos;étiquette ou de la gravure, mieux éclairée et cadrée serré, puis relancez. Vous pouvez aussi saisir la référence dans la recherche intelligente.
               </InlineAlert>
             ) : null}
             {result.status === "candidates-only" ? (

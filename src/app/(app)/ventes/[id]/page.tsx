@@ -44,7 +44,7 @@ export default async function SaleDetailPage({ params }: { params: Promise<{ id:
         actions={<SaleActions sale={{ id: sale.id, number: sale.number, status: sale.status }} can={{ confirm: hasPermission(user.role, "sales.confirm"), cancel: hasPermission(user.role, "sales.cancel"), edit: hasPermission(user.role, "sales.create") }} />}
       />
 
-      {sale.status === "BROUILLON" ? <InlineAlert variant="warning" className="mb-4" title="Brouillon : le stock n'a pas encore été déduit.">Confirmez la vente pour enregistrer les sorties de stock, ou modifiez-la tant qu'elle est en brouillon.</InlineAlert> : null}
+      {sale.status === "BROUILLON" ? <InlineAlert variant="warning" className="mb-4" title="Brouillon : le stock n'a pas encore été déduit.">Confirmez la vente pour enregistrer les sorties de stock, ou modifiez-la tant qu&apos;elle est en brouillon.</InlineAlert> : null}
       {sale.status === "ANNULEE" ? <InlineAlert variant="danger" className="mb-4" title={`Vente annulée le ${sale.cancelledAt ? formatDateTime(sale.cancelledAt) : "—"}.`}>{sale.confirmedAt ? "Les quantités ont été remises en stock (mouvements « Retour client »)." : "Ce brouillon a été annulé sans impact sur le stock."}</InlineAlert> : null}
 
       <div className="grid gap-4 lg:grid-cols-3">

@@ -287,7 +287,7 @@ export function PartForm({ mode, initial, refData, duplicateOf }: { mode: "creat
                 <Input id="retailPrice" type="number" step="0.01" min={0} inputMode="decimal" {...register("retailPrice")} invalid={Boolean(formState.errors.retailPrice)} className="text-right tabular" rightSlot={<span className="text-xs text-ink-muted">DA</span>} />
               </Field>
               {wholesale > 0 && retail > 0 && wholesale > retail ? <InlineAlert variant="warning">Le prix gros est supérieur au prix détail : vérifiez la saisie.</InlineAlert> : null}
-              {purchase > 0 && retail > 0 && retail < purchase ? <InlineAlert variant="danger">Le prix détail est inférieur au prix d'achat (vente à perte).</InlineAlert> : null}
+              {purchase > 0 && retail > 0 && retail < purchase ? <InlineAlert variant="danger">Le prix détail est inférieur au prix d&apos;achat (vente à perte).</InlineAlert> : null}
             </CardBody>
           </Card>
 

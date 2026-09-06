@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Car, Check, ChevronDown, ChevronUp, Info, Loader2, Search, Sparkles, Tag, Layers, Hash, X } from "lucide-react";
 import type { SearchResponse, SearchHit } from "@/server/services/search";
 import { smartSearchAction } from "@/server/actions/search";
@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
 const EXAMPLES = ["plaquette frein clio 4", "bosch 0986", "clio 4 1.5 dci", "filtre huile 208 1.6 hdi", "7701208265", "courroie distribution k9k", "amortisseur symbol", "4047024551831"];
 
 export function SmartSearch({ initialQuery, initialResult, canSell }: { initialQuery: string; initialResult: SearchResponse | null; canSell: boolean }) {
-  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
   const [query, setQuery] = React.useState(initialQuery);
@@ -211,7 +210,7 @@ export function SmartSearch({ initialQuery, initialResult, canSell }: { initialQ
                   </h2>
                   <span className="ml-auto text-[12px] text-ink-muted">Vérifiée = compatibilité confirmée ; Non vérifiée = à contrôler avant montage</span>
                 </header>
-                {compatible.length ? <ResultList hits={compatible} query={query} vehicleId={vehicle.id} canSell={canSell} /> : <p className="px-4 py-6 text-center text-[13px] text-ink-muted">Aucune pièce du catalogue n'est associée à ce véhicule pour cette recherche.</p>}
+                {compatible.length ? <ResultList hits={compatible} query={query} vehicleId={vehicle.id} canSell={canSell} /> : <p className="px-4 py-6 text-center text-[13px] text-ink-muted">Aucune pièce du catalogue n&apos;est associée à ce véhicule pour cette recherche.</p>}
               </section>
             ) : null}
             {others.length ? (

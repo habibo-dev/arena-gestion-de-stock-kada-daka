@@ -39,7 +39,7 @@ export function AdjustmentWorkbench({ initialPart, recent }: { initialPart: Pick
                 </p>
                 <p className="text-[13px] text-ink-secondary">{part.designation}</p>
                 <p className="mt-1 text-[12px] text-ink-muted">
-                  {part.location ? `Rayon ${part.location} · ` : ""}Prix d'achat <Money value={part.purchasePrice} className="text-ink" /> · min. {part.minStock}
+                  {part.location ? `Rayon ${part.location} · ` : ""}Prix d&apos;achat <Money value={part.purchasePrice} className="text-ink" /> · min. {part.minStock}
                 </p>
               </div>
               <div className="flex flex-col items-end gap-2">
@@ -60,8 +60,8 @@ export function AdjustmentWorkbench({ initialPart, recent }: { initialPart: Pick
       <Card>
         <CardHeader title="Rappels" />
         <CardBody className="space-y-2 text-[13px] text-ink-secondary">
-          <p><span className="font-medium text-ink">Ajouter / Retirer</span> : corrige le stock d'une quantité donnée (casse, retour, erreur).</p>
-          <p><span className="font-medium text-ink">Fixer à</span> : inventaire physique — vous saisissez la quantité comptée, l'écart est calculé.</p>
+          <p><span className="font-medium text-ink">Ajouter / Retirer</span> : corrige le stock d&apos;une quantité donnée (casse, retour, erreur).</p>
+          <p><span className="font-medium text-ink">Fixer à</span> : inventaire physique — vous saisissez la quantité comptée, l&apos;écart est calculé.</p>
           <p><span className="font-medium text-ink">Motif obligatoire</span> : il apparaît dans le journal et les rapports.</p>
           <p>Les ventes et les achats ne se saisissent pas ici : ils génèrent leurs propres mouvements à la confirmation / réception.</p>
         </CardBody>
