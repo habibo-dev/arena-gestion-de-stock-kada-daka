@@ -77,9 +77,19 @@ export class LocalOcrProvider implements VisionProvider {
     const worker = await getWorker();
     const { data } = await worker.recognize(prepared);
 
-    const lines = (data.lines ?? data.blocks ?? [])
+    // tesseract.js v7 only returns structured blocks when explicitly requested;
+    // fall back to splitting the raw text so downstream extraction always has lines.
+    const structured = (data.lines ?? data.blocks ?? [])
       .map((l) => ({ text: l.text.replace(/\s+/g, " ").trim(), confidence: Math.max(0, Math.min(1, (l.confidence ?? 0) / 100)) }))
       .filter((l) => l.text.length > 0);
+    const overall = Math.max(0, Math.min(1, (data.confidence ?? 0) / 100));
+    const lines = structured.length
+      ? structured
+      : data.text
+          .split(/\r?\n+/)
+          .map((t) => t.replace(/\s+/g, " ").trim())
+          .filter((t) => t.length > 0)
+          .map((text) => ({ text, confidence: overall }));
 
     if (data.confidence < 40) warnings.push("Qualité de lecture faible : rapprochez l'appareil, améliorez l'éclairage ou cadrez uniquement l'étiquette.");
     if (!data.text.trim()) warnings.push("Aucun texte lisible détecté sur l'image.");

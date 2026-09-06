@@ -397,7 +397,7 @@ export function searchParts(rawQuery: string, opts: SearchOptions = {}): SearchR
 
   const idList = [...scores.entries()].sort((a, b) => b[1].score - a[1].score).map(([id]) => id);
   if (idList.length === 0) {
-    return { hits: [], total: 0, interpretation, tookMs: performance.now() - t0 };
+    return { hits: [], total: 0, interpretation, tookMs: Math.round((performance.now() - t0) * 10) / 10 };
   }
 
   /* Hydrate */
@@ -467,7 +467,7 @@ export function searchParts(rawQuery: string, opts: SearchOptions = {}): SearchR
     };
   });
 
-  return { hits, total, interpretation, tookMs: performance.now() - t0 };
+  return { hits, total, interpretation, tookMs: Math.round((performance.now() - t0) * 10) / 10 };
 }
 
 /** Lightweight variant for the top-bar command palette. */

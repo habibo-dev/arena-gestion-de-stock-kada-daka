@@ -156,7 +156,10 @@ export async function searchByImage(image: { bytes: Buffer; mimeType: string }):
     }
   }
 
-  const ranked = [...matches.values()].sort((a, b) => b.confidence - a.confidence).slice(0, 12);
+  // Strong evidence (a read reference) makes weak brand/keyword suggestions mostly noise: keep only a few.
+  const all = [...matches.values()].sort((a, b) => b.confidence - a.confidence);
+  const hasStrong = all.some((m) => m.confidence >= 0.7);
+  const ranked = (hasStrong ? all.filter((m) => m.confidence >= 0.7).concat(all.filter((m) => m.confidence < 0.7).slice(0, 3)) : all).slice(0, 12);
   const status: ImageSearchResult["status"] = ranked.length ? "matches" : candidates.length ? "candidates-only" : "no-text";
   return { analysis, candidates, matches: ranked, status };
 }

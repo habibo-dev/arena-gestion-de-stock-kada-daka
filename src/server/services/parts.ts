@@ -5,6 +5,7 @@ import { reindexPart } from "@/server/db/search-index";
 import { normalizeReference, normalizeText, slugify } from "@/lib/references";
 import { getStockStatus, type StockStatus } from "@/lib/stock";
 import { BusinessError } from "@/lib/result";
+import { searchParts } from "./search";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -523,10 +524,16 @@ export function removeCompatibility(partId: number, vehicleId: number): void {
   reindexPart(getSqlite(), partId);
 }
 
-/** Lightweight part lookup for pickers (sales/purchases). */
-export function pickerSearch(q: string, limit = 12) {
-  const res = listParts({ q, pageSize: limit, page: 1 });
-  return res.items;
+/** Lightweight part lookup for pickers (sales/purchases): smart search first, LIKE fallback. */
+export function pickerSearch(q: string, limit = 12): PartListItem[] {
+  const query = q.trim();
+  if (query.length < 1) return [];
+  const hits = searchParts(query, { limit }).hits;
+  if (hits.length > 0) {
+    const byId = new Map(getPartsByIds(hits.map((h) => h.id)).map((p) => [p.id, p]));
+    return hits.map((h) => byId.get(h.id)).filter((p): p is PartListItem => Boolean(p));
+  }
+  return listParts({ q: query, pageSize: limit, page: 1 }).items;
 }
 
 export function getPartsByIds(ids: number[]) {

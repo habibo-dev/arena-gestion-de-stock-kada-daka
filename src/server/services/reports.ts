@@ -210,15 +210,18 @@ export function movementsSummary(range: DateRange) {
        FROM stock_movements WHERE created_at >= ? AND created_at <= ? GROUP BY type ORDER BY count DESC`,
     )
     .all(range.from, range.to) as { type: string; count: number; quantity: number; value: number }[];
-  const totals = byType.reduce(
-    (acc, r) => ({
-      inQty: acc.inQty + (r.quantity > 0 ? r.quantity : 0),
-      outQty: acc.outQty + (r.quantity < 0 ? -r.quantity : 0),
-      count: acc.count + r.count,
-    }),
-    { inQty: 0, outQty: 0, count: 0 },
-  );
-  return { byType, totals };
+  const dir = sqlite
+    .prepare(
+      `SELECT COALESCE(SUM(CASE WHEN quantity > 0 THEN quantity ELSE 0 END),0) AS totalIn,
+              COALESCE(SUM(CASE WHEN quantity < 0 THEN -quantity ELSE 0 END),0) AS totalOut,
+              SUM(CASE WHEN quantity > 0 THEN 1 ELSE 0 END) AS countIn,
+              SUM(CASE WHEN quantity < 0 THEN 1 ELSE 0 END) AS countOut,
+              COUNT(*) AS count
+       FROM stock_movements WHERE created_at >= ? AND created_at <= ?`,
+    )
+    .get(range.from, range.to) as { totalIn: number; totalOut: number; countIn: number | null; countOut: number | null; count: number };
+  const totals = { inQty: dir.totalIn, outQty: dir.totalOut, count: dir.count };
+  return { byType, totals, totalIn: dir.totalIn, totalOut: dir.totalOut, countIn: dir.countIn ?? 0, countOut: dir.countOut ?? 0 };
 }
 
 /* ------------------------------ Stock rotation ---------------------------- */

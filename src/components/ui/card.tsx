@@ -5,7 +5,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
   return <div className={cn("card", className)} {...props} />;
 }
 
-export function CardHeader({ className, title, description, actions, ...props }: React.HTMLAttributes<HTMLDivElement> & { title?: React.ReactNode; description?: React.ReactNode; actions?: React.ReactNode }) {
+export function CardHeader({ className, title, description, actions, ...props }: Omit<React.HTMLAttributes<HTMLDivElement>, "title"> & { title?: React.ReactNode; description?: React.ReactNode; actions?: React.ReactNode }) {
   return (
     <div className={cn("flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-3.5", className)} {...props}>
       <div className="min-w-0">
