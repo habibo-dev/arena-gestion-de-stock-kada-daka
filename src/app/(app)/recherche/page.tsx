@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { searchParts } from "@/server/services/search";
 import { PageHeader } from "@/components/ui/misc";
@@ -9,7 +9,7 @@ import { sp, type SearchParams } from "@/lib/search-params";
 export const metadata: Metadata = { title: "Recherche intelligente" };
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const user = await requirePermission("parts.view");
+  const user = await requirePagePermission("parts.view");
   const params = await searchParams;
   const q = (sp(params, "q") ?? "").trim();
   const onlyInStock = sp(params, "stock") === "1";

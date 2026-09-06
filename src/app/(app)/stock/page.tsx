@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CircleAlert, Coins, Layers, TriangleAlert } from "lucide-react";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getStockCounters, listBrands, listCategories, listLocations, listParts, listSuppliersLite } from "@/server/services/parts";
 import { stockValuation } from "@/server/services/reports";
@@ -13,7 +13,7 @@ import type { SearchParams } from "@/lib/search-params";
 export const metadata: Metadata = { title: "Stock" };
 
 export default async function StockPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const user = await requirePermission("parts.view");
+  const user = await requirePagePermission("parts.view");
   const params = await searchParams;
   const filters = parsePartFilters(params);
   if (!params.tri) {

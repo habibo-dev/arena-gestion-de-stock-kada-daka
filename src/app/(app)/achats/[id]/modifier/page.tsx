@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getPurchase, getReorderSuggestions } from "@/server/services/purchases";
 import { getPartsByIds } from "@/server/services/parts";
@@ -12,7 +12,7 @@ import { toPickedPart } from "@/lib/picked-part";
 export const metadata: Metadata = { title: "Modifier l'achat" };
 
 export default async function EditPurchasePage({ params }: { params: Promise<{ id: string }> }) {
-  const user = await requirePermission("purchases.create");
+  const user = await requirePagePermission("purchases.create");
   const { id } = await params;
   const purchaseId = Number(id);
   if (!Number.isInteger(purchaseId)) notFound();

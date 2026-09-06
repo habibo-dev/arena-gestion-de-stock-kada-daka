@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Search } from "lucide-react";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getVehicle, listMakes } from "@/server/services/vehicles";
 import { PageHeader, Money, PartThumb } from "@/components/ui/misc";
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const user = await requirePermission("vehicles.view");
+  const user = await requirePagePermission("vehicles.view");
   const { id } = await params;
   const vehicleId = Number(id);
   if (!Number.isInteger(vehicleId)) notFound();

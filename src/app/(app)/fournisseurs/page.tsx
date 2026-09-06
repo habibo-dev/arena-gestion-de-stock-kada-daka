@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { listSuppliers } from "@/server/services/suppliers";
 import { sp, type SearchParams } from "@/lib/search-params";
@@ -9,7 +9,7 @@ import { SuppliersList } from "@/components/suppliers/suppliers-list";
 export const metadata: Metadata = { title: "Fournisseurs" };
 
 export default async function SuppliersPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const user = await requirePermission("suppliers.view");
+  const user = await requirePagePermission("suppliers.view");
   const params = await searchParams;
   const suppliers = listSuppliers({ q: sp(params, "q"), includeInactive: sp(params, "inactifs") === "1" });
   return (

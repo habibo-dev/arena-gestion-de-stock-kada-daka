@@ -38,7 +38,7 @@ export function LoginForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
-      {error ? <InlineAlert variant="danger">{error}</InlineAlert> : null}
+      {error ? <InlineAlert variant="danger">{error}</InlineAlert> : params.get("expired") === "1" ? <InlineAlert variant="info">Votre session a expiré ou a été fermée. Veuillez vous reconnecter.</InlineAlert> : null}
       <Field label="Identifiant" htmlFor="username" error={formState.errors.username?.message}>
         <Input id="username" autoComplete="username" autoFocus autoCapitalize="none" spellCheck={false} {...register("username")} invalid={Boolean(formState.errors.username)} />
       </Field>

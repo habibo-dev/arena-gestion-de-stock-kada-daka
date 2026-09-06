@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PackageCheck, Truck, FileText } from "lucide-react";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { listPurchases, type PurchaseFilters } from "@/server/services/purchases";
 import { getSqlite } from "@/server/db/client";
@@ -23,7 +23,7 @@ function dayBounds(from?: string, to?: string) {
 }
 
 export default async function PurchasesPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const user = await requirePermission("purchases.view");
+  const user = await requirePagePermission("purchases.view");
   const params = await searchParams;
   const { page, pageSize } = spPage(params);
   const statut = sp(params, "statut") ?? "ALL";

@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { cache } from "react";
 import { eq, and, gt } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -59,6 +60,9 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
   return { id: row.id, username: row.username, fullName: row.fullName, email: row.email, role: row.role };
 });
 
+/**
+ * Server actions: throw typed errors (turned into ActionResult by runAction/safeRun).
+ */
 export async function requireUser(): Promise<SessionUser> {
   const user = await getCurrentUser();
   if (!user) throw new AuthError();
@@ -68,6 +72,22 @@ export async function requireUser(): Promise<SessionUser> {
 export async function requirePermission(permission: Permission): Promise<SessionUser> {
   const user = await requireUser();
   if (!hasPermission(user.role, permission)) throw new PermissionError();
+  return user;
+}
+
+/**
+ * Server components (pages): an expired/invalid session redirects to the login
+ * page; a missing permission renders the dedicated "Accès refusé" page.
+ */
+export async function requirePageUser(): Promise<SessionUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/connexion?expired=1");
+  return user;
+}
+
+export async function requirePagePermission(permission: Permission): Promise<SessionUser> {
+  const user = await requirePageUser();
+  if (!hasPermission(user.role, permission)) redirect(`/acces-refuse?droit=${encodeURIComponent(permission)}`);
   return user;
 }
 

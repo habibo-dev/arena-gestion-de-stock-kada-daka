@@ -66,7 +66,7 @@ export function stockValuation() {
               COALESCE(SUM(quantity * purchase_price),0) AS purchaseValue,
               COALESCE(SUM(quantity * wholesale_price),0) AS wholesaleValue,
               COALESCE(SUM(quantity * retail_price),0) AS retailValue,
-              COUNT(*) AS references
+              COUNT(*) AS "references"
        FROM parts WHERE is_active = 1`,
     )
     .get() as { totalQuantity: number; purchaseValue: number; wholesaleValue: number; retailValue: number; references: number };

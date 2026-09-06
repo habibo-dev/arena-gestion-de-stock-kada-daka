@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getPartsByIds } from "@/server/services/parts";
 import { getReorderSuggestions } from "@/server/services/purchases";
@@ -12,7 +12,7 @@ import { toPickedPart } from "@/lib/picked-part";
 export const metadata: Metadata = { title: "Nouvel achat" };
 
 export default async function NewPurchasePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const user = await requirePermission("purchases.create");
+  const user = await requirePagePermission("purchases.create");
   const params = await searchParams;
   const partId = spInt(params, "piece");
   const supplierParam = spInt(params, "fournisseur");

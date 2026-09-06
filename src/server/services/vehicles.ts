@@ -256,3 +256,70 @@ export function getCompatibilityStats() {
     .get() as { total: number; verified: number; partsWithVehicles: number; activeParts: number; vehicles: number };
   return row;
 }
+
+/** Compatibility links awaiting verification (for the review queue). */
+export function listUnverifiedCompatibilities(limit = 100) {
+  return getSqlite()
+    .prepare(
+      `SELECT c.part_id AS partId, c.vehicle_id AS vehicleId, c.source, c.note, c.created_at AS createdAt,
+              p.reference, p.designation, b.name AS brand,
+              mk.name AS make, md.name AS model, md.generation, v.engine_label AS engineLabel, v.engine_code AS engineCode
+       FROM compatibilities c
+       JOIN parts p ON p.id = c.part_id
+       LEFT JOIN brands b ON b.id = p.brand_id
+       JOIN vehicles v ON v.id = c.vehicle_id
+       JOIN vehicle_models md ON md.id = v.model_id
+       JOIN vehicle_makes mk ON mk.id = md.make_id
+       WHERE c.status = 'UNVERIFIED' AND p.is_active = 1
+       ORDER BY c.created_at DESC, p.reference
+       LIMIT ?`,
+    )
+    .all(limit) as {
+    partId: number;
+    vehicleId: number;
+    source: string | null;
+    note: string | null;
+    createdAt: string;
+    reference: string;
+    designation: string;
+    brand: string | null;
+    make: string;
+    model: string;
+    generation: string | null;
+    engineLabel: string;
+    engineCode: string | null;
+  }[];
+}
+
+/** Active parts with no vehicle association at all (data gap, not "universal"). */
+export function listPartsWithoutCompatibility(limit = 100) {
+  return getSqlite()
+    .prepare(
+      `SELECT p.id, p.reference, p.designation, b.name AS brand, c.name AS category, p.quantity, p.min_stock AS minStock
+       FROM parts p
+       LEFT JOIN brands b ON b.id = p.brand_id
+       LEFT JOIN categories c ON c.id = p.category_id
+       WHERE p.is_active = 1 AND NOT EXISTS (SELECT 1 FROM compatibilities x WHERE x.part_id = p.id)
+       ORDER BY p.quantity DESC, p.reference
+       LIMIT ?`,
+    )
+    .all(limit) as { id: number; reference: string; designation: string; brand: string | null; category: string | null; quantity: number; minStock: number }[];
+}
+
+/** Coverage per make: how many vehicles / links / verified links. */
+export function compatibilityCoverageByMake() {
+  return getSqlite()
+    .prepare(
+      `SELECT mk.id, mk.name,
+              COUNT(DISTINCT v.id) AS vehicles,
+              COUNT(c.part_id) AS links,
+              SUM(CASE WHEN c.status = 'VERIFIED' THEN 1 ELSE 0 END) AS verified,
+              COUNT(DISTINCT c.part_id) AS parts
+       FROM vehicle_makes mk
+       JOIN vehicle_models md ON md.make_id = mk.id
+       JOIN vehicles v ON v.model_id = md.id
+       LEFT JOIN compatibilities c ON c.vehicle_id = v.id
+       GROUP BY mk.id ORDER BY links DESC, mk.name`,
+    )
+    .all() as { id: number; name: string; vehicles: number; links: number; verified: number; parts: number }[];
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { getVisionStatus } from "@/server/vision";
 import { PageHeader } from "@/components/ui/misc";
 import { ImageSearch } from "@/components/search/image-search";
@@ -7,7 +7,7 @@ import { ImageSearch } from "@/components/search/image-search";
 export const metadata: Metadata = { title: "Recherche par image" };
 
 export default async function ImageSearchPage() {
-  await requirePermission("parts.view");
+  await requirePagePermission("parts.view");
   const status = await getVisionStatus();
   return (
     <>

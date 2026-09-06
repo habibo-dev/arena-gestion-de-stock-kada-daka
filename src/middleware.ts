@@ -20,6 +20,12 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
   if (hasCookie && pathname === "/connexion") {
+    // Stale cookie (expired / revoked session): let the login page render and drop the cookie.
+    if (req.nextUrl.searchParams.get("expired") === "1") {
+      const res = NextResponse.next();
+      res.cookies.delete(SESSION_COOKIE);
+      return res;
+    }
     const url = req.nextUrl.clone();
     url.pathname = "/";
     url.search = "";

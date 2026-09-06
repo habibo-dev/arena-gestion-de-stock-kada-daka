@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { listMakes, listVehicles } from "@/server/services/vehicles";
 import { sp, spInt, type SearchParams } from "@/lib/search-params";
@@ -9,7 +9,7 @@ import { VehiclesList } from "@/components/vehicles/vehicles-list";
 export const metadata: Metadata = { title: "Véhicules" };
 
 export default async function VehiclesPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const user = await requirePermission("vehicles.view");
+  const user = await requirePagePermission("vehicles.view");
   const params = await searchParams;
   const fuel = sp(params, "carburant");
   const vehicles = listVehicles({ q: sp(params, "q"), makeId: spInt(params, "marque") ?? undefined, fuel: fuel && fuel !== "ALL" ? fuel : undefined });

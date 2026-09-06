@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { getPartDetail, listBrands, listCategories, listLocations, listSuppliersLite } from "@/server/services/parts";
 import { PageHeader } from "@/components/ui/misc";
 import { PartForm } from "@/components/parts/part-form";
@@ -8,7 +8,7 @@ import { PartForm } from "@/components/parts/part-form";
 export const metadata: Metadata = { title: "Modifier la pièce" };
 
 export default async function EditPartPage({ params }: { params: Promise<{ id: string }> }) {
-  await requirePermission("parts.update");
+  await requirePagePermission("parts.update");
   const { id } = await params;
   const part = getPartDetail(Number(id));
   if (!part) notFound();

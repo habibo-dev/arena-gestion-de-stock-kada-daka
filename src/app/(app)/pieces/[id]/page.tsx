@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Barcode, Boxes, Coins, ShoppingCart, Truck } from "lucide-react";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getPartDetail, listLocations } from "@/server/services/parts";
 import { listMovements } from "@/server/services/movements";
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PartDetailPage({ params }: Props) {
-  const user = await requirePermission("parts.view");
+  const user = await requirePagePermission("parts.view");
   const { id } = await params;
   const partId = Number(id);
   if (!Number.isInteger(partId)) notFound();

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowDownLeft, ArrowUpRight, ArrowLeftRight } from "lucide-react";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { listMovements, type MovementFilters } from "@/server/services/movements";
 import { movementsSummary } from "@/server/services/reports";
@@ -22,7 +22,7 @@ function dayBounds(from?: string, to?: string) {
 }
 
 export default async function MovementsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const user = await requirePermission("movements.view");
+  const user = await requirePagePermission("movements.view");
   const params = await searchParams;
   const { page, pageSize } = spPage(params);
   const type = sp(params, "type") ?? "ALL";

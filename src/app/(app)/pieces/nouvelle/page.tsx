@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { duplicatePartSource, listBrands, listCategories, listLocations, listSuppliersLite, getPartDetail } from "@/server/services/parts";
 import { PageHeader } from "@/components/ui/misc";
 import { PartForm } from "@/components/parts/part-form";
@@ -8,7 +8,7 @@ import { sp, type SearchParams } from "@/lib/search-params";
 export const metadata: Metadata = { title: "Nouvelle pièce" };
 
 export default async function NewPartPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  await requirePermission("parts.create");
+  await requirePagePermission("parts.create");
   const params = await searchParams;
   const dupId = Number(sp(params, "dupliquer"));
   const source = Number.isInteger(dupId) && dupId > 0 ? duplicatePartSource(dupId) : null;

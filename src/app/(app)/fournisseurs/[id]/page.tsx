@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Coins, Package, ShoppingBag, Truck } from "lucide-react";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getSupplier } from "@/server/services/suppliers";
 import { formatCurrency, formatDate, formatDateTime, formatInteger } from "@/lib/format";
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 export default async function SupplierDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const user = await requirePermission("suppliers.view");
+  const user = await requirePagePermission("suppliers.view");
   const { id } = await params;
   const supplierId = Number(id);
   if (!Number.isInteger(supplierId)) notFound();

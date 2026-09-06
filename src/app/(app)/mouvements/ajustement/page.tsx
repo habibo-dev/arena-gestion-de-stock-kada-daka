@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { getPartDetail } from "@/server/services/parts";
 import { listMovements } from "@/server/services/movements";
 import { PageHeader } from "@/components/ui/misc";
@@ -9,7 +9,7 @@ import { spInt, type SearchParams } from "@/lib/search-params";
 export const metadata: Metadata = { title: "Ajustement de stock" };
 
 export default async function AdjustmentPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  await requirePermission("stock.adjust");
+  await requirePagePermission("stock.adjust");
   const params = await searchParams;
   const partId = spInt(params, "piece");
   const part = partId ? getPartDetail(partId) : null;

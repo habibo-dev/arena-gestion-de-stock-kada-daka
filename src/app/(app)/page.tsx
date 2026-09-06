@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Boxes, CircleAlert, Coins, Layers, PackagePlus, ShoppingCart, TriangleAlert, Truck, Camera, Search, ArrowLeftRight } from "lucide-react";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { getDashboardData } from "@/server/services/dashboard";
 import { hasPermission } from "@/lib/permissions";
 import { formatAmount, formatCurrency, formatDateLong, formatInteger, formatRelative } from "@/lib/format";
@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = { title: "Tableau de bord" };
 
 export default async function DashboardPage() {
-  const user = await requirePermission("dashboard.view");
+  const user = await requirePagePermission("dashboard.view");
   const data = getDashboardData();
   const { kpis } = data;
   const salesDelta = kpis.salesYesterday.total > 0 ? ((kpis.salesToday.total - kpis.salesYesterday.total) / kpis.salesYesterday.total) * 100 : undefined;

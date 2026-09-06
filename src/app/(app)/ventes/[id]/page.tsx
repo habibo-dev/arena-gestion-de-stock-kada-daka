@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getSale } from "@/server/services/sales";
 import { listMovements } from "@/server/services/movements";
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 export default async function SaleDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const user = await requirePermission("sales.view");
+  const user = await requirePagePermission("sales.view");
   const { id } = await params;
   const saleId = Number(id);
   if (!Number.isInteger(saleId)) notFound();

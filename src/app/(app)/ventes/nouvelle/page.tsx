@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getSetting } from "@/server/services/settings";
 import { getPartsByIds } from "@/server/services/parts";
@@ -10,7 +10,7 @@ import { spInt, type SearchParams } from "@/lib/search-params";
 export const metadata: Metadata = { title: "Nouvelle vente" };
 
 export default async function NewSalePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const user = await requirePermission("sales.create");
+  const user = await requirePagePermission("sales.create");
   const params = await searchParams;
   const partId = spInt(params, "piece");
   const prefill = partId ? (getPartsByIds([partId])[0] ?? null) : null;

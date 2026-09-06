@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { requirePermission } from "@/server/auth/session";
+import { requirePagePermission } from "@/server/auth/session";
 import { hasPermission } from "@/lib/permissions";
 import { getSale } from "@/server/services/sales";
 import { getPartsByIds } from "@/server/services/parts";
@@ -11,7 +11,7 @@ import { SaleForm } from "@/components/sales/sale-form";
 export const metadata: Metadata = { title: "Modifier la vente" };
 
 export default async function EditSalePage({ params }: { params: Promise<{ id: string }> }) {
-  const user = await requirePermission("sales.create");
+  const user = await requirePagePermission("sales.create");
   const { id } = await params;
   const saleId = Number(id);
   if (!Number.isInteger(saleId)) notFound();
